@@ -26,8 +26,20 @@ RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gallois"/g' ~/.zshrc
 RUN sed -i 's/plugins=(git)/plugins=(bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
 # RUN echo "alias ll='ls -al'" >> ~/.zshrc
 
+# Configure Docker
+USER root
+RUN wget -O /usr/bin/slirp4netns https://github.com/rootless-containers/slirp4netns/releases/download/v1.1.12/slirp4netns-x86_64 \
+    && chmod +x /usr/bin/slirp4netns
+
+RUN wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/v2.4.1/docker-compose-linux-x86_64 \
+    && chmod +x /usr/local/bin/docker-compose && mkdir -p /usr/local/lib/docker/cli-plugins && \
+    ln -s /usr/local/bin/docker-compose /usr/local/lib/docker/cli-plugins/docker-compose
+
+RUN wget -O /tmp/dive.tar.gz https://github.com/wagoodman/dive/releases/download/v0.10.0/dive_0.10.0_linux_amd64.tar.gz \
+    && tar -xf /tmp/dive.tar.gz && cp dive /usr/bin \
+    && rm -rf /tmp/* dive LICENSE README.md
+
 USER gitpod
-RUN zsh
 # Custom PATH additions
 ENV PATH=$HOME/.local/bin:$PATH
 
