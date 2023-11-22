@@ -5,7 +5,7 @@ RUN apk update && apk upgrade
 RUN gem install bundler --no-document && gem install solargraph --no-document
 
 ### Gitpod user ###
-COPY sudoers /etc
+COPY ./sudoers /etc
 RUN addgroup -S gitpod
 RUN adduser -S -u 33333 -G wheel -s /bin/zsh -D gitpod
 RUN addgroup gitpod gitpod
