@@ -6,7 +6,7 @@ RUN gem install bundler --no-document && gem install solargraph --no-document
 
 ### Gitpod user ###
 COPY ./sudoers /etc
-RUN addgroup -S gitpod
+RUN addgroup -S -g 33333 gitpod
 RUN adduser -S -u 33333 -G wheel -s /bin/zsh -D gitpod
 RUN addgroup gitpod gitpod
 # To emulate the workspace-session behavior within dazzle build env
