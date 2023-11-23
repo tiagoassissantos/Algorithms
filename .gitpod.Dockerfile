@@ -72,7 +72,7 @@ USER gitpod
 # Configure Apache and Nginx
 USER root
 RUN mkdir -p /var/run/nginx
-COPY --chown=gitpod:gitpod webserver/nginx/ /etc/nginx/
+COPY --chown=gitpod:gitpod ./webserver/nginx/ /etc/nginx/
 ENV NGINX_DOCROOT_IN_REPO="public"
 USER gitpod
 
