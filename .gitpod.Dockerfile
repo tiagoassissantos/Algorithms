@@ -6,7 +6,7 @@ RUN pacman -S --noconfirm base-devel git git-lfs htop sudo nano vim man-db zsh r
 RUN locale-gen en_US.UTF-8
 
 ### Gitpod user ###
-COPY sudoers /etc
+COPY ./sudoers /etc
 RUN useradd -l -u 33333 -G wheel -md /home/gitpod -s /bin/bash -p gitpod gitpod \
     # To emulate the workspace-session behavior within dazzle build env
     && mkdir /workspace && chown -hR gitpod:gitpod /workspace
@@ -14,7 +14,7 @@ RUN useradd -l -u 33333 -G wheel -md /home/gitpod -s /bin/bash -p gitpod gitpod 
 ENV HOME=/home/gitpod
 WORKDIR $HOME
 # custom Bash prompt
-COPY --chown=gitpod:gitpod bash.bashrc /home/gitpod/.bashrc
+#COPY --chown=gitpod:gitpod bash.bashrc /home/gitpod/.bashrc
 
 # configure git-lfs
 RUN git lfs install --system --skip-repo
