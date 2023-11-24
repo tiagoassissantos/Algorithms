@@ -1,7 +1,7 @@
 FROM library/archlinux:latest
 RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm base-devel git git-lfs htop sudo nano vim man-db zsh ripgrep stow which \
-    ruby elixir openssh lsof jq zip unzip meson docker rlwrap cmake nginx python-pip nodejs npm wget \
+    ruby elixir gauche openssh lsof jq zip unzip meson docker rlwrap cmake nginx python-pip nodejs npm wget \
     python-setuptools python-wheel python-virtualenv python-pipenv python-pylint python-rope python-pydocstyle python-twine
 RUN locale-gen en_US.UTF-8
 
