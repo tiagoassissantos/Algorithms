@@ -43,9 +43,9 @@ RUN echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
 RUN echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 
 # Install Ruby
-RUN asdf plugin add ruby
-RUN asdf install ruby 3.2.2
-RUN asdf global ruby 3.2.2
+RUN ~/.asdf/bin/asdf plugin add ruby
+RUN ~/.asdf/bin/asdf install ruby 3.2.2
+RUN ~/.asdf/bin/asdf global ruby 3.2.2
 
 RUN gem install bundler --no-document \
         && gem install solargraph --no-document \
