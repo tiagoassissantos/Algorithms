@@ -38,7 +38,8 @@ RUN curl -sSL https://install.python-poetry.org | python
 RUN sudo rm -rf /tmp/*
 
 RUN gem install bundler --no-document \
-        && gem install solargraph --no-document
+        && gem install solargraph --no-document \
+        && gem install rspec --no-document
 
 # Install Homebrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
