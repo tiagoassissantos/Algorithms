@@ -1,7 +1,7 @@
 FROM library/archlinux:latest
 RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm base-devel git git-lfs htop sudo nano vim man-db zsh ripgrep stow which \
-    ruby elixir gauche openssh lsof jq zip unzip meson docker rlwrap cmake nginx python-pip nodejs npm wget \
+    elixir gauche openssh lsof jq zip unzip meson docker rlwrap cmake nginx python-pip nodejs npm wget \
     python-setuptools python-wheel python-virtualenv python-pipenv python-pylint python-rope python-pydocstyle python-twine
 RUN locale-gen en_US.UTF-8
 
@@ -37,6 +37,16 @@ RUN sudo echo "Running 'sudo' for Gitpod: success" && \
 RUN curl -sSL https://install.python-poetry.org | python
 RUN sudo rm -rf /tmp/*
 
+# Install asdf
+RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.4.0
+RUN echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+RUN echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+
+# Install Ruby
+RUN asdf plugin add ruby
+RUN asdf install ruby 3.2.2
+RUN asdf global ruby 3.2.2
+
 RUN gem install bundler --no-document \
         && gem install solargraph --no-document \
         && gem install rspec --no-document
@@ -52,7 +62,7 @@ ENV HOMEBREW_NO_AUTO_UPDATE=1
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # Optionally, customize the .zshrc file
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gallois"/g' ~/.zshrc
-RUN sed -i 's/plugins=(git)/plugins=(bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
+RUN sed -i 's/plugins=(git)/plugins=(asdf bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
 # RUN echo "alias ll='ls -al'" >> ~/.zshrc
 
 # Configure Docker
