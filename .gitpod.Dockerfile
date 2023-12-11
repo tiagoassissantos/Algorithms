@@ -38,18 +38,19 @@ RUN curl -sSL https://install.python-poetry.org | python
 RUN sudo rm -rf /tmp/*
 
 # Install asdf
-RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.4.0
+RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 RUN echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
 RUN echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+RUN source ~/.bashrc
 
 # Install Ruby
 RUN ~/.asdf/bin/asdf plugin-add ruby
-RUN ~/.asdf/bin/asdf install ruby 3.2.2
-RUN ~/.asdf/bin/asdf global ruby 3.2.2
+#RUN ~/.asdf/bin/asdf install ruby 3.2.2
+#RUN ~/.asdf/bin/asdf global ruby 3.2.2
 
-RUN gem install bundler --no-document \
-        && gem install solargraph --no-document \
-        && gem install rspec --no-document
+#RUN gem install bundler --no-document \
+#        && gem install solargraph --no-document \
+#        && gem install rspec --no-document
 
 # Install Homebrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -80,7 +81,7 @@ RUN wget -O /tmp/dive.tar.gz https://github.com/wagoodman/dive/releases/download
 
 USER gitpod
 
-# Configure Apache and Nginx
+# Configure Nginx
 USER root
 RUN mkdir -p /var/run/nginx
 COPY --chown=gitpod:gitpod ./webserver/nginx/ /etc/nginx/
