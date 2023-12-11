@@ -1,6 +1,6 @@
 FROM library/archlinux:latest
 RUN pacman -Syu --noconfirm
-RUN pacman -S --noconfirm base-devel git git-lfs htop sudo nano vim man-db zsh ripgrep stow which \
+RUN pacman -S --noconfirm base-devel git git-lfs htop sudo nano vim man-db zsh ripgrep stow which libyaml \
     elixir gauche openssh lsof jq zip unzip meson docker rlwrap cmake nginx python-pip nodejs npm wget \
     python-setuptools python-wheel python-virtualenv python-pipenv python-pylint python-rope python-pydocstyle python-twine
 RUN locale-gen en_US.UTF-8
@@ -13,8 +13,6 @@ RUN useradd -l -u 33333 -G wheel -md /home/gitpod -s /bin/bash -p gitpod gitpod 
 
 ENV HOME=/home/gitpod
 WORKDIR $HOME
-# custom Bash prompt
-#COPY --chown=gitpod:gitpod bash.bashrc /home/gitpod/.bashrc
 
 # configure git-lfs
 RUN git lfs install --system --skip-repo
@@ -23,19 +21,19 @@ RUN git lfs install --system --skip-repo
 USER gitpod
 # use sudo so that user does not get sudo usage info on (the first) login
 RUN sudo echo "Running 'sudo' for Gitpod: success" && \
-    # create .bashrc.d folder and source it in the bashrc
     mkdir -p /home/gitpod/.bashrc.d && \
     (echo; echo "for i in \$(ls -A \$HOME/.bashrc.d/); do source \$HOME/.bashrc.d/\$i; done"; echo) >> /home/gitpod/.bashrc && \
-    # create a completions dir for gitpod user
     mkdir -p /home/gitpod/.local/share/bash-completion/completions
 
-# Install some Python modules and poetry
-#RUN pip install --no-cache-dir --upgrade \
-#    setuptools wheel virtualenv pipenv pylint rope flake8 \
-#    mypy autopep8 pep8 pylama pydocstyle bandit notebook \
-#    twine && 
 RUN curl -sSL https://install.python-poetry.org | python
 RUN sudo rm -rf /tmp/*
+
+# Install oh-my-zsh for gitpod
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gallois"/g' ~/.zshrc
+RUN sed -i 's/plugins=(git)/plugins=(asdf bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
+
+CMD ["zsh"]
 
 # Install asdf
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf
@@ -45,8 +43,9 @@ RUN source ~/.bashrc
 
 # Install Ruby
 RUN ~/.asdf/bin/asdf plugin-add ruby
-#RUN ~/.asdf/bin/asdf install ruby 3.2.2
-#RUN ~/.asdf/bin/asdf global ruby 3.2.2
+RUN ~/.asdf/bin/asdf install ruby 3.2.2
+RUN ~/.asdf/bin/asdf global ruby 3.2.2
+#RUN ruby -v
 
 #RUN gem install bundler --no-document \
 #        && gem install solargraph --no-document \
@@ -58,13 +57,6 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin/:$PATH
 ENV MANPATH="$MANPATH:/home/linuxbrew/.linuxbrew/share/man"
 ENV INFOPATH="$INFOPATH:/home/linuxbrew/.linuxbrew/share/info"
 ENV HOMEBREW_NO_AUTO_UPDATE=1
-
-# Install oh-my-zsh for gitpod
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# Optionally, customize the .zshrc file
-RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gallois"/g' ~/.zshrc
-RUN sed -i 's/plugins=(git)/plugins=(asdf bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
-# RUN echo "alias ll='ls -al'" >> ~/.zshrc
 
 # Configure Docker
 USER root
@@ -90,5 +82,3 @@ USER gitpod
 
 # Custom PATH additions
 ENV PATH=$HOME/.local/bin:$PATH
-
-CMD ["zsh"]
