@@ -33,8 +33,6 @@ RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh
 RUN sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="gallois"/g' ~/.zshrc
 RUN sed -i 's/plugins=(git)/plugins=(asdf bundler docker git github mix rails rake ruby sudo)/g' ~/.zshrc
 
-CMD ["zsh"]
-
 # Install asdf
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf
 RUN echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
@@ -45,11 +43,6 @@ RUN source ~/.bashrc
 RUN ~/.asdf/bin/asdf plugin-add ruby
 RUN ~/.asdf/bin/asdf install ruby 3.2.2
 RUN ~/.asdf/bin/asdf global ruby 3.2.2
-#RUN ruby -v
-
-#RUN gem install bundler --no-document \
-#        && gem install solargraph --no-document \
-#        && gem install rspec --no-document
 
 # Install Homebrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -71,14 +64,17 @@ RUN wget -O /tmp/dive.tar.gz https://github.com/wagoodman/dive/releases/download
     && tar -xf /tmp/dive.tar.gz && cp dive /usr/bin \
     && rm -rf /tmp/* dive LICENSE README.md
 
-USER gitpod
-
 # Configure Nginx
-USER root
 RUN mkdir -p /var/run/nginx
 COPY --chown=gitpod:gitpod ./webserver/nginx/ /etc/nginx/
 ENV NGINX_DOCROOT_IN_REPO="public"
-USER gitpod
 
+USER gitpod
 # Custom PATH additions
-ENV PATH=$HOME/.local/bin:$PATH
+ENV PATH=$HOME/.local/bin:$HOME/.asdf/bin:$PATH
+
+CMD ["zsh"]
+RUN /home/gitpod/.asdf/shims/gem install bundler --no-document \
+        && /home/gitpod/.asdf/shims/gem install solargraph --no-document \
+        && /home/gitpod/.asdf/shims/gem install rspec --no-document \
+        && /home/gitpod/.asdf/shims/gem install rubocop --no-document
